@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "id": "vexbot_gui",
+  "version": "1.13.0",
+  "name": "VexBot GUI Addon",
+  "description": "A client-side VexBot control center with an in-game mascot. Press B to open.",
+  "authors": [
+    "Fares"
+  ],
+  "license": "MIT",
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      "com.fares.vexbotgui.VexBotGuiAddon"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=0.19.3",
+    "minecraft": "~1.21.11",
+    "java": ">=21",
+    "fabric-api": "*"
+  }
+}
