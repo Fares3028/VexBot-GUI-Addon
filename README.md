@@ -1,30 +1,31 @@
-# VexBot GUI Addon (client-side)
+# VexBot GUI Addon 1.7.0
 
-A separate Fabric client addon for Minecraft 1.21.11. Press **B** to open the control panel. It does not modify or bundle the original VexBot JAR.
+Client-side Fabric addon (1.21.11) for the **VexBot 3.2.0** server mod. **B** opens the panel, **N** quick-spawns a bot with your last settings.
 
-## Current prototype
-- Modern dark control panel.
-- Bot name field.
-- EASY / MEDIUM / HARD selector.
-- Spawn Bot action.
-- Random Gear action.
-- Armor selector (none/leather/chainmail/iron/diamond/netherite) via vanilla `/item replace`.
-- Kill Bot button.
+Tabs: QUICK, SPAWN, LOADOUT (+ kits), COMBAT, ORDERS, TEAMS, SETTINGS, PRESETS, CONSOLE.
 
-## Important compatibility note
-VexBot 3.2.0 declares itself as a server-side mod. The addon sends commands through the normal client command connection, so the player must have permission to run VexBot commands and VexBot must be installed on the server/world. The original mod's command tree confirms `/vexbot spawn <name>`, `/vexbot randomgear`, and `/vexbot difficulty preset <level>` exist; the exact accepted difficulty preset values and whether the preset is global or per-bot must be tested in-game before treating this prototype as release-ready.
+- All commands were checked against the real VexBot 3.2.0 command tree (see CHANGELOG below).
+- Server replies appear in the CONSOLE tab and in the footer.
+- Command syntax lives in `config/vexbot_gui_commands.json` (`{bot}`, `{arg}`, `{arg2}` are replaced). Edit it, then press RELOAD CMDS. An older file is backed up as `.old` and reset automatically.
+- Presets are saved in `config/vexbot_gui_presets.json` (old presets are migrated).
+- Equipment uses vanilla `/item replace` (needs OP). Kits are VexBot's own (`/vexbot givekit`, `spawn ... <kit>` needs `settings advancedspawn on`).
 
-## Build
-Requires Java 21 and Gradle 8.14+ with internet access for Fabric Loom/Minecraft dependencies:
+## Changes in 1.7.0
+- Completely new layout: sidebar navigation on the left, one calm page on the right with a title, soft rounded cards,
+  flat buttons with hover, wide level cards in QUICK, and borderless input fields with a mint focus line.
+- Buttons are drawn by the addon; the vanilla buttons on top are invisible and only handle clicks.
 
-```bash
-gradle build
-```
+## Changes in 1.6.0
+- New **QUICK** tab (opens first): one click spawns a ready bot next to you.
+  EASY = leather + wooden sword, MEDIUM = chainmail + stone sword, HARD = iron + iron sword + shield,
+  EXPERT = diamond + diamond sword + shield, PERFECT = netherite + netherite sword + totem, plus RANDOM LEVEL.
+  Name is automatic unless you type one. KILL LAST QUICK BOT removes the last one.
+- Calmer mint/slate look with gradient bar, soft card and colour-coded level buttons.
+- Added wooden / stone / iron swords to the LOADOUT weapon list.
 
-The compiled JAR will be in `build/libs/`.
-
-## Install
-1. Build the project.
-2. Put `vexbot-gui-addon-1.0.0.jar` in the client's `mods` folder.
-3. Keep the original VexBot mod installed on the server/world.
-4. Launch Minecraft 1.21.11 with Fabric and press **B**.
+## Changes in 1.5.0
+- Fixed: `stop`, `wander`, `tp`, `follow`, `attack`, `randomgear`, `playstyle` used wrong syntax.
+- Difficulty is now per-bot (`difficulty player <bot> preset <level>`); a separate button sets it for all bots.
+- Removed `pro` difficulty and `passive` style (VexBot has neither); play style is now also applied on spawn.
+- New ORDERS tab: follow / attack / hide / wander / go to / look / stop everything.
+- New TEAMS tab, SETTINGS tab (common on/off settings), kit buttons, CLEAR LOG.
