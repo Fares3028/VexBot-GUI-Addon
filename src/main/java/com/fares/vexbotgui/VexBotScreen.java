@@ -128,8 +128,8 @@ public final class VexBotScreen extends Screen {
         }).bounds(x, y, 140, 22).build());
     }
 
-    private void btn(int x, int y, int w, String label, Runnable r) {
-        addRenderableWidget(Button.builder(Component.literal(label), b -> r.run()).bounds(x, y, w, 22).build());
+    private void btn(int x, int y, int w, int h, String label, Runnable r) {
+        addRenderableWidget(Button.builder(Component.literal(label), b -> r.run()).bounds(x, y, w, h).build());
     }
 
     private String name() {
