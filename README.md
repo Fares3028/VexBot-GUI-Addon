@@ -1,14 +1,62 @@
-# VexBot GUI Addon 1.13.0
+# VexBot GUI Addon 1.17.0
 
 Client-side Fabric addon (1.21.11) for the **VexBot 3.2.0** server mod. **B** opens the panel, **N** quick-spawns a bot with your last settings.
 
-Tabs: QUICK, SPAWN, LOADOUT (+ kits), COMBAT, ORDERS, TEAMS, SETTINGS, PRESETS, CONSOLE.
+Tabs: DASHBOARD, QUICK, SPAWN, LOADOUT (+ kits), COMBAT, ORDERS, TEAMS, SETTINGS, PRESETS, CONSOLE.
 
 - All commands were checked against the real VexBot 3.2.0 command tree (see CHANGELOG below).
 - Server replies appear in the CONSOLE tab and in the footer.
 - Command syntax lives in `config/vexbot_gui_commands.json` (`{bot}`, `{arg}`, `{arg2}` are replaced). Edit it, then press RELOAD CMDS. An older file is backed up as `.old` and reset automatically.
 - Presets are saved in `config/vexbot_gui_presets.json` (old presets are migrated).
 - Equipment uses vanilla `/item replace` (needs OP). Kits are VexBot's own (`/vexbot givekit`, `spawn ... <kit>` needs `settings advancedspawn on`).
+
+## Changes in 1.17.0 (stability review of 1.16.0, see REVIEW-REPORT-v17.md)
+- **Honest status**: QUEUED (scheduled) / SENT (left this client) / SERVER MESSAGE / SERVER ERROR / NOT SENT / NOT CONFIRMED.
+  A bot counts as *confirmed* only when it is really in the player list; the chat report says "ONLINE (confirmed)" and "setup sent",
+  never "done". The last-bot target is only set for a confirmed bot, and is cleared when you kill it.
+- **Confirmations**: the SPAWN and BUILD TEAM buttons show CONFIRM only while the confirmation for exactly those settings is waiting;
+  KILL / DELETE confirmations now expire visibly after 5 s ("CONFIRMATION EXPIRED").
+- **Teams**: the list is read once per session automatically (no retry loop on failure); a failed or incomplete refresh marks the data
+  OLD / "not confirmed"; roster answers can no longer land on the wrong team; DELETE TEAM and BUILD TEAM re-read the server list and
+  report whether the result is really there.
+- **Console**: every line has a time and a direction (`>` sent, `<` reply, `!` note), errors are red, config warnings stay on top.
+  New dashboard row with the config state and COPY DIAGNOSTICS (versions, connection, warnings, last console lines).
+- **Config safety**: a reset commands file is never silent; the original presets file is kept before a migration or when entries are
+  skipped; a rolling `vexbot_gui_presets.json.bak` is written before each save; backup problems are warnings.
+- **Robustness**: a bug in one scheduled task, reply collector or button can no longer crash the game (it is shown in the console);
+  buttons that previously showed success without a connection (STOP EVERYTHING, kit, equipment) now check it; shorter text fitting.
+- Tests: 47 (was 22): classifier, task queue, log buffer, confirmations, backups, team list completeness.
+- CI also uploads the test report and generates the Gradle wrapper files as an artifact.
+
+## Changes in 1.16.0 (real team list)
+- TEAMS now has two clearly separated pages: **CREATE NEW TEAM** (name, size, level, BUILD) and **MANAGE A TEAM**.
+- MANAGE has a **team picker** filled from the server (`/vexbot team list`, read-only) plus teams built here.
+  It shows bots/players counts and how old the data is. REFRESH asks again; SHOW MEMBERS reads one team's roster.
+- Every MANAGE action acts on the SELECTED team (never on a typed or remembered name); the status names the team.
+- After BUILD TEAM the addon switches to MANAGE and refreshes the counts once the bots had time to join.
+- The list is read from the server's chat reply; if the reply cannot be recognised the panel says so instead of guessing.
+- New `vexbot_gui_commands.json` key `teamslist` (missing keys use the built-in default, so no reset is needed).
+- Unit tests for the list/roster parser.
+
+## Changes in 1.15.0 (safety + honest status)
+- **Session reset**: joining or leaving a server forgets the last bot, last team, reserved random names and any pending confirmation.
+- **Teams**: names are validated (1-24 letters, digits, `_`, `-`). BUILD TEAM and DELETE TEAM always need the name typed;
+  other team actions may use the last team, and the field hint and status say so.
+- **Confirmations** (mass spawn, BUILD TEAM over 3 bots) are bound to everything that matters (name, size, level, server session)
+  and expire after 5 s; changing anything starts the confirmation over.
+- **Honest status**: a command shows "sent, waiting for server", then "SERVER MESSAGE" with the first reply, or
+  "no reply (not confirmed)". Server messages are not matched to a specific command (the console only records chat after a send).
+- **Config**: command and preset problems are separate lists (several warnings are kept); a failed save no longer hides a load warning.
+  A broken commands/presets JSON is moved to `<file>.bad-yyyyMMdd-HHmmss` instead of being overwritten.
+- New unit tests: confirmations, file backup, preset migration, team-name validation.
+
+## Changes in 1.14.0
+- Added a dashboard with connection, last bot/team, preset count, and shortcuts.
+- Console log now supports mouse-wheel scrolling.
+- Preset save validation, 50-preset cap, and delete confirmation; preset writes use a safer temporary-file replacement.
+- Random bot names avoid names already reserved in this session and online names more reliably.
+- Layout spacing and sidebar sizing tuned for smaller GUI resolutions.
+- Loadout now includes Elytra as a chest-slot option; preview and equip logic treat it separately from armor sets.
 
 ## Changes in 1.13.0
 - Animations: panel fades in on open, the sidebar highlight glides between tabs, buttons fade smoothly on hover (frame-rate independent).
