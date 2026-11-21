@@ -14,10 +14,26 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: 9.2.0
-      - run: gradle build
+      # compiles the mod AND runs every unit test (a failing test fails the build)
+      - run: gradle build --stacktrace
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-reports
+          path: build/reports/tests/test/
+          if-no-files-found: ignore
       - uses: actions/upload-artifact@v4
         with:
           name: vexbot-gui-addon
           path: |
             build/libs/*.jar
             !build/libs/*-sources.jar
+      # Gradle wrapper: download "gradle-wrapper-files" and commit its contents to enable ./gradlew
+      - run: gradle wrapper --gradle-version 9.2.0
+      - uses: actions/upload-artifact@v4
+        with:
+          name: gradle-wrapper-files
+          path: |
+            gradlew
+            gradlew.bat
+            gradle/wrapper/
