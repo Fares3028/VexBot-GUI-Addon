@@ -1,0 +1,14 @@
+VexBot GUI Addon 1.19.0 — local verification
+
+PASS — javac compiled the pure helper classes (Validate, TeamSafetyPolicy, TeamFollowPlan, LoadoutSupplies, TeamRosterVerifier).
+PASS — standalone Java smoke test: safety settings include autotarget/targetplayers/targetbots/targetmobs/revengemode OFF.
+PASS — invalid team names are rejected by TeamSafetyPolicy.
+PASS — TeamFollowPlan partitions online/missing expected bots and deduplicates names case-insensitively.
+PASS — Bow -> 64 arrows; Elytra + Mace -> 64 fireworks + 32 wind charges.
+PASS — roster verifier confirms expected names in a sample roster.
+PASS — source-level check: buildTeam no longer issues "vexbot team create".
+PASS — source-level check: FOLLOW ME resyncs only the expected bots for this GUI-built team; does not use addall.
+PASS — fabric.mod.json parsed as valid JSON; ZIP integrity checked after packaging.
+
+NOT RUN — full Gradle build / JUnit engine: Gradle is not installed in the execution environment and no Gradle Wrapper is included.
+NOT RUN — Minecraft client/server integration test: requires a live 1.21.11 Fabric server with VexBot 3.2.5.
